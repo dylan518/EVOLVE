@@ -1,0 +1,41 @@
+### model
+model_name_or_path: "input your model path here, like `google/gemma-2-2b-it`"
+
+### method
+stage: sft
+do_train: true
+finetuning_type: lora
+lora_target: all
+
+## dataset
+### tulu-v2-sft-mixture: code_alpaca, cot, flan_v2, gpt4_alpaca, lima, oasst1, open_orca, science_literature, sharegpt, wizardlm
+dataset: "input your dataset name here, like `code_alpaca`"
+dataset_dir: "input your dataset path here"
+template: gemma
+cutoff_len: 4096
+# max_samples: 1000
+overwrite_cache: true
+preprocessing_num_workers: 16
+
+### output
+output_dir: "input your output path here"
+save_steps: 1000
+save_total_limit: 1
+plot_loss: true
+overwrite_output_dir: true
+
+### train
+per_device_train_batch_size: 2
+gradient_accumulation_steps: 2
+learning_rate: 2.0e-4
+num_train_epochs: 1.0
+lr_scheduler_type: cosine
+warmup_ratio: 0.1
+bf16: true
+ddp_timeout: 180000000
+
+### lora config
+lora_rank: 8
+lora_alpha: 16
+lora_dropout: 0.0
+lora_target: all
