@@ -42,6 +42,8 @@ class BaseConfig:
     
     def validate(self):
         """Validate common configuration parameters."""
+        if getattr(self, "init_mode", "file") not in ("file", "zero", "random"):
+            raise ValueError("init_mode must be 'file', 'zero', or 'random'")
         # Validate tasks and weights
         if len(self.tasks) == 0:
             raise ValueError("Must specify at least one task.")
@@ -57,8 +59,8 @@ class BaseConfig:
             raise ValueError("Model name or path must be specified")
         if not self.llm_base_url:
             raise ValueError("LLM base URL must be specified")
-        if not self.pools:
-            raise ValueError("LoRA pools must be specified")
+        if getattr(self, "init_mode") == "file" and not self.pools:
+            raise ValueError("LoRA pools must be specified when init_mode='file'")
             
         # Validate early stopping
         if self.early_stop and self.early_stop_iter <= 0:

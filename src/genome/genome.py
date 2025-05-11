@@ -11,12 +11,15 @@ from src.genome.config import GenomeConfig
 from src.genome.individual import Individual
 from src.utils import load_lora_weight
 from src.base.base_method import BaseMethod
+from src.loinit import make_lora_state
+
 
 class Genome(BaseMethod):
     def __init__(self, config: GenomeConfig):
         """
         Initialize the Genome.
         """
+        
         
         # order is important.
         self.cross_method = config.cross_method
@@ -35,6 +38,8 @@ class Genome(BaseMethod):
         self.elite_number = int(self.elite_percent * self.N)
 
         self.method = config.method
+        self.init_mode = config.init_mode
+
 
     def initialize(self) -> None:
         logger.info(f"Initializing population...")
@@ -42,41 +47,69 @@ class Genome(BaseMethod):
 
         self.individuals = []
 
-        expert_pairs = self.generate_pair_sequences(pools=self.pools, n_samples=self.N, seed=self.seed)
-        for expert_pair in expert_pairs:
-            individual_id = uuid.uuid4().hex
-            individual_weight = self.merge_lora_weights(
-                lora_state_dicts=[load_lora_weight(expert_pair[0]), load_lora_weight(expert_pair[1])],
-                weights=[], 
-                method=self.combine_method,
-                density=0.7,
-                majority_sign_method="total"
+        if self.init_mode != "file":
+            os.makedirs("generated_adapters", exist_ok=True)
+            base_state = make_lora_state(
+                base_model=self.model_name_or_path,
+                rank=8,
+                mode=self.init_mode,
+                sigma=self.sigma
             )
-            individual = Individual(
-                id=individual_id,
-                x=individual_weight,
-                weight_path=os.path.join(self.workspace, f"individual_{individual_id}"),
-                parent=expert_pair,
-                lora_config_path=self.pools[0],
-                model_name_or_path=self.model_name_or_path,
-            )
-            individual.save_individual(save_path=individual.weight_path)
-            self.individuals.append(individual)
-        
-        weighted_scores = self.evaluate(individuals=self.individuals, split="valid")
-        for individual_id, result in weighted_scores.items():
-            self.update_global(
-                id=individual_id,
-                fitness_score=result['weighted_score'],
-                path=result['path'],
-                task_scores=result['task_scores']
-            )
-        end_time = time.time()
-        logger.info(f"Init time: {(end_time - start_time):.2f} seconds.")
+            for _ in range(self.N):
+                uid = uuid.uuid4().hex
+                w_path = os.path.join("generated_adapters", f"ind_{uid}")
+                save_lora_weight(
+                    lora_weight=base_state.copy(),
+                    lora_path=w_path,
+                    tokenizer=self.model_name_or_path,   # tokenizer string is fine
+                    config="generated_adapters"          # peft will create adapter_config.json
+                )
+                ind = Individual(
+                    id=uid, x=base_state.copy(), parent=[],
+                    weight_path=w_path, model_name_or_path=self.model_name_or_path,
+                    lora_config_path=w_path
+                )
+                # give each individual an immediate mutation if you started from pure zeros
+                if self.init_mode == "zero":
+                    ind = ind.mutate(seed=self.seed, sigma=self.sigma)
+                self.individuals.append(ind)
 
-        self.update_optim_state(step = 0, time=end_time-start_time, weighted_scores=weighted_scores)
-        self.save_optim_state(self.state)
-        self.report_state(step=0)
+        else:
+            expert_pairs = self.generate_pair_sequences(pools=self.pools, n_samples=self.N, seed=self.seed)
+            for expert_pair in expert_pairs:
+                individual_id = uuid.uuid4().hex
+                individual_weight = self.merge_lora_weights(
+                    lora_state_dicts=[load_lora_weight(expert_pair[0]), load_lora_weight(expert_pair[1])],
+                    weights=[], 
+                    method=self.combine_method,
+                    density=0.7,
+                    majority_sign_method="total"
+                )
+                individual = Individual(
+                    id=individual_id,
+                    x=individual_weight,
+                    weight_path=os.path.join(self.workspace, f"individual_{individual_id}"),
+                    parent=expert_pair,
+                    lora_config_path=self.pools[0],
+                    model_name_or_path=self.model_name_or_path,
+                )
+                individual.save_individual(save_path=individual.weight_path)
+                self.individuals.append(individual)
+            
+            weighted_scores = self.evaluate(individuals=self.individuals, split="valid")
+            for individual_id, result in weighted_scores.items():
+                self.update_global(
+                    id=individual_id,
+                    fitness_score=result['weighted_score'],
+                    path=result['path'],
+                    task_scores=result['task_scores']
+                )
+            end_time = time.time()
+            logger.info(f"Init time: {(end_time - start_time):.2f} seconds.")
+
+            self.update_optim_state(step = 0, time=end_time-start_time, weighted_scores=weighted_scores)
+            self.save_optim_state(self.state)
+            self.report_state(step=0)
 
     def selection(self, method: str) -> List[Individual]:
         # check if the population is full
