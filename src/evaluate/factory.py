@@ -10,7 +10,6 @@ from src.evaluate.MMLUPro import MMLUPro
 from src.evaluate.DROP import DROP
 from src.evaluate.MGSM import MGSM
 from src.evaluate.FLORES101 import FLORES101
-from src.evaluate.TRUTHFULQA import TRUTHFULQA
 from src.evaluate.BBH import BBH
 from enum import Enum
 
@@ -30,7 +29,6 @@ class Benchmark(Enum):
     MGSM="mgsm"
     FLORES101="flores101"
     FLORES37="flores37"
-    TRUTHFULQA="truthfulqa"
     BBH="bbh"
     
 class EvaluatorFactory:
@@ -77,8 +75,6 @@ class EvaluatorFactory:
             return FLORES101(model_name_or_path=self.model_name_or_path, language_numbers=101)
         elif task == Benchmark.FLORES37:
             return FLORES101(model_name_or_path=self.model_name_or_path, language_numbers=37)
-        elif task == Benchmark.TRUTHFULQA:
-            return TRUTHFULQA()
         elif task == Benchmark.BBH:
             return BBH()
         else:
