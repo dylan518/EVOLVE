@@ -6,6 +6,11 @@ __pycache__/
 # C extensions
 *.so
 
+#generated weights
+genome_workspace/
+generated_adapters/
+
+
 # Distribution / packaging
 .Python
 build/

@@ -9,7 +9,7 @@ import numpy as np
 from loguru import logger
 from src.genome.config import GenomeConfig
 from src.genome.individual import Individual
-from src.utils import load_lora_weight
+from src.utils import load_lora_weight, save_lora_weight
 from src.base.base_method import BaseMethod
 from src.loinit import make_lora_state
 
@@ -70,8 +70,6 @@ class Genome(BaseMethod):
                     lora_config_path=w_path
                 )
                 # give each individual an immediate mutation if you started from pure zeros
-                if self.init_mode == "zero":
-                    ind = ind.mutate(seed=self.seed, sigma=self.sigma)
                 self.individuals.append(ind)
 
         else:
@@ -234,7 +232,7 @@ class Genome(BaseMethod):
                 x=individual_weight,
                 weight_path=os.path.join(self.workspace, f"individual_{individual_id}"),
                 parent=pair,
-                lora_config_path=self.pools[0],
+                lora_config_path=self.pools[0] if self.pools else "generated_adapters",
                 model_name_or_path=self.model_name_or_path,
             )
             individual.save_individual(save_path=individual.weight_path)
