@@ -6,11 +6,6 @@ __pycache__/
 # C extensions
 *.so
 
-#generated weights
-genome_workspace/
-generated_adapters/
-
-
 # Distribution / packaging
 .Python
 build/
@@ -105,3 +100,10 @@ secrets.json
 # Logs
 *.log
 logs/
+
+#env
+*.env
+
+#datas
+datas/
+datas
