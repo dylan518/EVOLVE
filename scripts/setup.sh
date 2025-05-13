@@ -11,3 +11,8 @@ sudo apt update
 sudo apt install git-lfs -y
 git lfs install
 git lfs pull
+
+#vllm reqs
+sudo apt-get update
+sudo apt-get install -y build-essential
+sudo apt-get install -y binutils 
