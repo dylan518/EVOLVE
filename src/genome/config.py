@@ -16,6 +16,7 @@ class GenomeConfig(BaseConfig):
     gene_mutation_rate: float
     sigma: float
     elite_percent: float
+    init_mode: str = "file" 
     method: str = "roulette"
 
     def __post_init__(self):
@@ -46,6 +47,11 @@ class GenomeConfig(BaseConfig):
             raise ValueError("Elite percentage must be between 0 and 1")
         if self.method not in ["roulette", "tournament"]:
             raise ValueError("Selection method must be either 'roulette' or 'tournament'")
+        
+        if self.init_mode not in ["file", "zero", "random"]:
+            raise ValueError("init_mode must be 'file', 'zero', or 'random'")
+        if self.init_mode == "file" and not self.pools:
+            raise ValueError("LoRA pools must be specified when init_mode='file'")
     
     def save(self, path):
         if isinstance(self.cross_method, CombineMethod):

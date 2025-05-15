@@ -100,3 +100,16 @@ secrets.json
 # Logs
 *.log
 logs/
+vllm_logs/
+
+#env
+*.env
+
+#datas
+datas/
+datas
+
+#generated_adapters
+generated_adapters/
+lora_adapters/
+genome_workspace/

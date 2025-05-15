@@ -14,7 +14,14 @@ def parse_args():
         "--model_path", type=str, required=True,
     )
     parser.add_argument(
-        "--lora_dir", type=str, required=True,
+    "--lora_dir", type=str, required=False,
+    help="Folder of LoRA adapters (needed only when --init_mode file)"
+    )
+    parser.add_argument(
+        "--init_mode",
+        choices=["file", "zero", "random"],
+        default="file",
+        help="file = load adapters from --lora_dir  ·  zero/random = build population from scratch"
     )
     parser.add_argument(
         "--tasks", type=str, nargs="+", required=True,
@@ -71,16 +78,20 @@ def parse_args():
 
 def main():
     args = parse_args()
+    if args.init_mode == "file" and not args.lora_dir:
+        parser.error("--lora_dir is required when --init_mode file")
+    
 
     config = GenomeConfig(
         tasks = args.tasks,
+        init_mode = args.init_mode,
         test_tasks = args.test_tasks,
         task_weights = args.task_weights,
         model_name_or_path = args.model_path,
         N = args.population_size,
         max_iter = args.iters,
         llm_base_url = get_base_url(args.ports),
-        pools = get_lora_pools(args.lora_dir),
+        pools = get_lora_pools(args.lora_dir) if args.init_mode == "file" else [],
         combine_method = args.combine_method,
         # hyper parameters
         cross_rate = args.cross_rate,
