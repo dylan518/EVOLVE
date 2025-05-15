@@ -18,6 +18,5 @@ if ! command -v node &>/dev/null; then
   curl -fsSL https://deb.nodesource.com/setup_20.x | sudo -E bash -
   sudo apt-get install -y nodejs
 fi
+echo "$HF_TOKEN" | huggingface-cli login --token
 
-# global install of the Codex agent
-sudo npm install -g @openai/codex  

@@ -3,13 +3,13 @@ export VLLM_LOGGING_LEVEL=DEBUG
 export VLLM_ALLOW_RUNTIME_LORA_UPDATING=True
 export VLLM_ALLOW_LONG_MAX_MODEL_LEN=1
 
-MODEL_PATH="input your model path here"
+MODEL="meta-llama/Meta-Llama-3-8B-Instruct"
 MAX_LORAS=20
-ROOT="gemma-2-2b-it"
+ROOT="meta-llama-3-8b-instruct"
 MAX_LORA_RANK=16
-GPU_ID=6
+GPU_ID=0
 
-PORT=9112
+PORT=8000
 
 echo "Deploying model $MODEL with $MAX_LORAS LORAs"
 echo "Starting API servers..."

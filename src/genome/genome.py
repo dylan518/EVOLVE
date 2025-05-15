@@ -6,9 +6,13 @@ from concurrent.futures import ThreadPoolExecutor, as_completed
 from typing import Dict, List
 
 import numpy as np
+import torch
 from loguru import logger
+from peft import LoraConfig
+
 from src.genome.config import GenomeConfig
 from src.genome.individual import Individual
+from src.loinit import make_lora_state
 from src.utils import load_lora_weight, save_lora_weight
 from src.base.base_method import BaseMethod
 from src.loinit import make_lora_state
@@ -49,27 +53,47 @@ class Genome(BaseMethod):
 
         if self.init_mode != "file":
             os.makedirs("generated_adapters", exist_ok=True)
+            
+            # Create LoraConfig
+            lora_config = LoraConfig(
+                r=8,  # rank
+                lora_alpha=16,  # alpha
+                target_modules=["q_proj", "v_proj"],
+                lora_dropout=0.05,
+                bias="none",
+                task_type="CAUSAL_LM"
+            )
+            
             base_state = make_lora_state(
                 base_model=self.model_name_or_path,
                 rank=8,
                 mode=self.init_mode,
-                sigma=self.sigma
+                sigma=self.sigma,
+                dtype=torch.float16,
+                target_modules=["q_proj", "v_proj"]
             )
+            
             for _ in range(self.N):
                 uid = uuid.uuid4().hex
                 w_path = os.path.join("generated_adapters", f"ind_{uid}")
+                os.makedirs(w_path, exist_ok=True)
+                
                 save_lora_weight(
                     lora_weight=base_state.copy(),
                     lora_path=w_path,
-                    tokenizer=self.model_name_or_path,   # tokenizer string is fine
-                    config="generated_adapters"          # peft will create adapter_config.json
+                    tokenizer=self.model_name_or_path,
+                    config=lora_config
                 )
+                
                 ind = Individual(
-                    id=uid, x=base_state.copy(), parent=[],
-                    weight_path=w_path, model_name_or_path=self.model_name_or_path,
-                    lora_config_path=w_path
+                    id=uid, 
+                    x=base_state.copy(), 
+                    parent=[],
+                    weight_path=w_path, 
+                    model_name_or_path=self.model_name_or_path,
+                    lora_config_path=w_path,
+                    lora_config=lora_config  # Pass the LoraConfig object
                 )
-                # give each individual an immediate mutation if you started from pure zeros
                 self.individuals.append(ind)
 
         else:

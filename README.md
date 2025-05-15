@@ -5,3 +5,6 @@ This approach has not been previously explored, as training from scratch typical
 We are also extending this evolutionary framework to test-time compute-constrained (TTC) models such as Qwen 1.5B R1.
 
 The broader goal of EVOLVE is to demonstrate that backpropagation may not be the only—or optimal—path forward in neural network training. We see genetic algorithms as a promising alternative for training more efficient, general, and adaptive models.
+
+
+A lot of the code is not in a format that can be run easily right now, but I'm in the processing of containerising the code.
