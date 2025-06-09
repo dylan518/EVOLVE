@@ -1,0 +1,45 @@
+# Example TOML configuration for EVOLVE pipeline
+
+[model]
+name = "meta-llama/Meta-Llama-3-8B-Instruct"
+port = 8000
+gpu_id = 0
+max_loras = 20
+max_lora_rank = 16
+gpu_memory_utilization = 0.45
+max_model_len = 4096
+seed = 42
+
+# Optional: override the name used for logs (defaults to model's basename)
+root = "meta-llama-3-8b-instruct"
+
+[genome]
+# Which runner to invoke; use "run_genomeplus.py" for GenomePlus
+script = "run_genome.py"
+
+# Arguments accepted by run_genome.py
+model_path = "meta-llama/Meta-Llama-3-8B-Instruct"
+init_mode = "zero"
+tasks = ["mmlu"]
+# Use the same tasks for test_tasks in this minimal example
+test_tasks = ["mmlu"]
+# Must sum to 1.0 — the script will normalise automatically
+task_weights = [1.0]
+combine_method = "ties"
+cross_method = "ties"
+ports = [8000]
+population_size = 1
+iters = 1
+early_stop = true
+early_stop_iter = 1
+seed = 42
+
+[setup]
+# If 'env' virtual environment folder is absent, this script will be executed automatically
+script = "scripts/setup.sh"
+
+[env]
+# Seconds to wait after starting the vLLM server before launching the Genome search
+wait_seconds_after_deploy = 30
+# Your optional Hugging Face token for gated models
+huggingface_token = "${HF_TOKEN}"  # replace with your token or leave blank 
