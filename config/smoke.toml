@@ -1,0 +1,38 @@
+ [model]
+ name = "TinyLlama/TinyLlama-1.1B-Chat-v1.0"
+ port = 8000
+ gpu_id = 0
+ max_loras = 8
+ max_lora_rank = 8
+ gpu_memory_utilization = 0.3
+ max_model_len = 2048
+ seed = 42
+
+ [genome]
+ script = "run_genome.py"
+ model_path = "TinyLlama/TinyLlama-1.1B-Chat-v1.0"
+ init_mode = "zero"
+ tasks = ["mmlu"]
+ test_tasks = ["mmlu"]
+ task_weights = [1.0]
+ combine_method = "ties"
+ cross_method = "ties"
+ ports = [8000, 8000, 8000, 8000]
+ population_size = 8
+ iters = 3
+ cross_rate = 0.9
+ individual_mutation_rate = 0.5
+ gene_mutation_rate = 0.05
+ sigma = 0.05
+ elite_percent = 0.2
+ plot_enabled = true
+ early_stop = true
+ early_stop_iter = 1
+ seed = 42
+
+ [setup]
+ script = "scripts/setup.sh"
+
+ [env]
+ wait_seconds_after_deploy = 10
+
