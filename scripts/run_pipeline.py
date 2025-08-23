@@ -171,8 +171,10 @@ def main() -> None:
     # Export Hugging Face token if provided
     hf_token = cfg.get("env", {}).get("huggingface_token")
     if hf_token:
-        os.environ.setdefault("HUGGINGFACEHUB_API_TOKEN", hf_token)
-        os.environ.setdefault("HF_TOKEN", hf_token)
+        # Allow ${VAR} or $VAR expansion if provided in the config
+        hf_token = os.path.expandvars(hf_token)
+        os.environ["HUGGINGFACEHUB_API_TOKEN"] = hf_token
+        os.environ["HF_TOKEN"] = hf_token
 
     # ------- 1. Start vLLM server -------------------------------------------------
     port = cfg["model"].get("port", 8000)

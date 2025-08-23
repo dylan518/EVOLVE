@@ -34,7 +34,7 @@ class Benchmark(Enum):
 class EvaluatorFactory:
     def __init__(self, model_name_or_path: str=None):
         if model_name_or_path is None:
-            self.model_name_or_path = "gemma-2-2b-it"
+            self.model_name_or_path = "meta-llama/Meta-Llama-3-8B-Instruct"
         else:
             self.model_name_or_path = model_name_or_path
     

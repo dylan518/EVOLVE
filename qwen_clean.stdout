@@ -1,0 +1,65 @@
+INFO 08-16 21:19:36 [__init__.py:235] Automatically detected platform cuda.
+2025-08-16 21:19:37.857 | INFO     | src.base.base_method:init_workspace:80 - Workspace: genome_workspace/mmlu/N4_ties/Qwen3-4B/GENOME-ae4a1e14eb8d431abd3709532045fc87
+2025-08-16 21:19:38.039 | INFO     | src.genome.genome:search:327 - Start GA search.
+2025-08-16 21:19:38.040 | INFO     | src.genome.genome:print_config:314 - GA config: 
+2025-08-16 21:19:38.040 | INFO     | src.genome.genome:print_config:315 - Tasks = ['mmlu'], Task weights = [1.0], Seed = 42, N = 4, Epochs = 1, Combine method = CombineMethod.TIES, Cross method = CombineMethod.TIES, cross rate = 0.8, mutation rate = 0.15, gene mutation rate = 0.01, sigma = 0.01
+Early Stop = True, Early Stop Iter = 1
+
+2025-08-16 21:19:38.040 | INFO     | src.genome.genome:initialize:49 - Initializing population...
+Loading checkpoint shards:   0%|          | 0/3 [00:00<?, ?it/s]Loading checkpoint shards:  33%|███▎      | 1/3 [00:01<00:02,  1.32s/it]Loading checkpoint shards:  67%|██████▋   | 2/3 [00:02<00:01,  1.46s/it]Loading checkpoint shards: 100%|██████████| 3/3 [00:02<00:00,  1.04it/s]
+2025-08-16 21:19:50.233 | INFO     | src.genome.genome:crossover:219 - Start Crossover, method: roulette
+2025-08-16 21:19:50.233 | INFO     | src.base.base_method:merge_lora_weights:456 - Merge 2 lora weights with method: CombineMethod.TIES
+2025-08-16 21:19:59.651 | INFO     | src.base.base_method:merge_lora_weights:456 - Merge 2 lora weights with method: CombineMethod.TIES
+2025-08-16 21:20:08.882 | INFO     | src.genome.genome:crossover:265 - Crossover completed, current population size: 6
+2025-08-16 21:20:08.882 | INFO     | src.genome.genome:mutation:268 - Start mutation...
+2025-08-16 21:20:08.920 | INFO     | src.genome.individual:mutation:59 - Individual 2fb4f6e2b937465f81d6031ccefc96bc (fitness score: -100.0000) mutated into 1f0dabb545414ec5a2c0bf335f845c26
+2025-08-16 21:20:10.612 | INFO     | src.genome.genome:mutation:285 - Mutation completed, current population size: 7
+2025-08-16 21:20:10.613 | INFO     | src.base.base_method:evaluate:233 - Start evaluating 7 individuals on 1 tasks...
+2025-08-16 21:20:10.613 | INFO     | src.base.base_method:evaluate:241 - Evaluating on task: mmlu
+2025-08-16 21:50:19.377 | ERROR    | src.base.base_method:evaluate_single_task:205 - Error processing future result: local variable 'logger' referenced before assignment
+2025-08-16 21:54:15.328 | ERROR    | src.base.base_method:evaluate_single_task:205 - Error processing future result: local variable 'logger' referenced before assignment
+2025-08-16 21:54:15.328 | INFO     | src.base.base_method:evaluate:255 - Individual 78c7108e2133471ba26bc73fefee8eec:
+2025-08-16 21:54:15.328 | INFO     | src.base.base_method:evaluate:256 -   Weighted score: 0.6667
+2025-08-16 21:54:15.329 | INFO     | src.base.base_method:evaluate:258 -   - Task mmlu: 0.6667
+2025-08-16 21:54:15.329 | INFO     | src.base.base_method:evaluate:255 - Individual 2fb4f6e2b937465f81d6031ccefc96bc:
+2025-08-16 21:54:15.329 | INFO     | src.base.base_method:evaluate:256 -   Weighted score: 0.6526
+2025-08-16 21:54:15.329 | INFO     | src.base.base_method:evaluate:258 -   - Task mmlu: 0.6526
+2025-08-16 21:54:15.329 | INFO     | src.base.base_method:evaluate:255 - Individual ab2b280f40724054a0008fa9d2e97dee:
+2025-08-16 21:54:15.329 | INFO     | src.base.base_method:evaluate:256 -   Weighted score: 0.6491
+2025-08-16 21:54:15.329 | INFO     | src.base.base_method:evaluate:258 -   - Task mmlu: 0.6491
+2025-08-16 21:54:15.329 | INFO     | src.base.base_method:evaluate:255 - Individual 96fa10d6d6224038ad75320adff850ce:
+2025-08-16 21:54:15.329 | INFO     | src.base.base_method:evaluate:256 -   Weighted score: 0.6632
+2025-08-16 21:54:15.329 | INFO     | src.base.base_method:evaluate:258 -   - Task mmlu: 0.6632
+2025-08-16 21:54:15.329 | INFO     | src.base.base_method:evaluate:255 - Individual 1f0dabb545414ec5a2c0bf335f845c26:
+2025-08-16 21:54:15.329 | INFO     | src.base.base_method:evaluate:256 -   Weighted score: 0.6526
+2025-08-16 21:54:15.329 | INFO     | src.base.base_method:evaluate:258 -   - Task mmlu: 0.6526
+2025-08-16 21:54:15.330 | INFO     | src.base.base_method:update_global:94 - Individual 78c7108e2133471ba26bc73fefee8eec fitness: 0.6667
+2025-08-16 21:54:15.367 | INFO     | src.base.base_method:update_global:100 - Global max updated: 0.6667
+2025-08-16 21:54:15.368 | INFO     | src.base.base_method:update_global:102 - Best individual task scores:
+2025-08-16 21:54:15.368 | INFO     | src.base.base_method:update_global:104 -   - Task mmlu: 0.6667
+2025-08-16 21:54:15.380 | INFO     | src.base.base_method:update_global:112 - Global min updated: 0.6667
+2025-08-16 21:54:15.381 | INFO     | src.base.base_method:update_global:94 - Individual 2fb4f6e2b937465f81d6031ccefc96bc fitness: 0.6526
+2025-08-16 21:54:15.393 | INFO     | src.base.base_method:update_global:112 - Global min updated: 0.6526
+2025-08-16 21:54:15.394 | INFO     | src.base.base_method:update_global:94 - Individual ab2b280f40724054a0008fa9d2e97dee fitness: 0.6491
+2025-08-16 21:54:15.404 | INFO     | src.base.base_method:update_global:112 - Global min updated: 0.6491
+2025-08-16 21:54:15.404 | INFO     | src.base.base_method:update_global:94 - Individual 96fa10d6d6224038ad75320adff850ce fitness: 0.6632
+2025-08-16 21:54:15.404 | INFO     | src.base.base_method:update_global:94 - Individual 1f0dabb545414ec5a2c0bf335f845c26 fitness: 0.6526
+2025-08-16 21:54:15.404 | INFO     | src.genome.genome:selection:142 - Start selection, method: tournament
+2025-08-16 21:54:15.408 | INFO     | src.genome.genome:selection:212 - Removed unselected individual: genome_workspace/mmlu/N4_ties/Qwen3-4B/GENOME-ae4a1e14eb8d431abd3709532045fc87/individual_d761225f8b71438ca597af45ccedd9f4
+2025-08-16 21:54:15.410 | INFO     | src.genome.genome:selection:212 - Removed unselected individual: generated_adapters/ind_ab2b280f40724054a0008fa9d2e97dee
+2025-08-16 21:54:15.413 | INFO     | src.genome.genome:selection:212 - Removed unselected individual: genome_workspace/mmlu/N4_ties/Qwen3-4B/GENOME-ae4a1e14eb8d431abd3709532045fc87/individual_8462c06f9f76475c9887ef77a8366320
+2025-08-16 21:54:15.413 | INFO     | src.genome.genome:_step:307 - Step 1 takes 2065.18 seconds.
+2025-08-16 21:54:15.414 | INFO     | src.base.base_method:report_state:119 - Step: 1, Global max: 0.6667, Global min: 0.6491, Average fitness score: 0.6588
+2025-08-16 21:54:15.414 | INFO     | src.base.base_method:ensemble_test:332 - Ensemble test on task: mmlu
+2025-08-16 22:09:55.415 | ERROR    | src.base.base_method:ensemble_test:361 - Error processing future result: local variable 'logger' referenced before assignment
+2025-08-16 22:09:57.446 | ERROR    | src.base.base_method:ensemble_test:361 - Error processing future result: local variable 'logger' referenced before assignment
+2025-08-16 22:10:02.817 | ERROR    | src.base.base_method:ensemble_test:361 - Error processing future result: local variable 'logger' referenced before assignment
+2025-08-16 22:10:04.787 | ERROR    | src.base.base_method:ensemble_test:361 - Error processing future result: local variable 'logger' referenced before assignment
+2025-08-16 22:10:04.787 | ERROR    | src.base.base_method:ensemble_test:412 - Error in ensemble test method: 'mmlu'
+2025-08-16 22:10:04.788 | ERROR    | src.genome.genome:search:351 - Error saving final state: '96fa10d6d6224038ad75320adff850ce'
+2025-08-16 22:10:04.789 | INFO     | src.base.base_method:generate_plots:1087 - Generating plots...
+2025-08-16 22:10:05.024 | INFO     | src.base.base_method:plot_optimization_curves:901 - Optimization curves saved to genome_workspace/mmlu/N4_ties/Qwen3-4B/GENOME-ae4a1e14eb8d431abd3709532045fc87/plots/optimization_curves.png
+2025-08-16 22:10:05.468 | INFO     | src.base.base_method:plot_score_distributions:950 - Score distributions saved to genome_workspace/mmlu/N4_ties/Qwen3-4B/GENOME-ae4a1e14eb8d431abd3709532045fc87/plots/score_distributions.png
+2025-08-16 22:10:05.898 | INFO     | src.base.base_method:plot_correlation_matrix:1011 - Correlation matrix saved to genome_workspace/mmlu/N4_ties/Qwen3-4B/GENOME-ae4a1e14eb8d431abd3709532045fc87/plots/correlation_matrix.png
+2025-08-16 22:10:05.898 | WARNING  | src.base.base_method:plot_ensemble_performance:1019 - No ensemble test data available for plotting
+2025-08-16 22:10:05.899 | INFO     | src.base.base_method:generate_plots:1109 - All plots generated successfully.

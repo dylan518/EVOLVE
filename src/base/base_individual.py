@@ -53,15 +53,21 @@ class BaseIndividual(ABC):
                 "score": self.task_scores[task]
             }
         
+        import os
         evaluator = EvaluatorFactory().get_evaluator(task=task)
+        eval_method = Method.API
+        if os.getenv("EVOLVE_EVAL_METHOD", "").lower() in ("local", "1", "true"): 
+            eval_method = Method.LOCAL
         result = evaluator.evaluate(
-            method=Method.API, 
-            llm=llm, 
-            lora_name=f"individual-{self.id}-{random.randint(0, 10000)}", 
-            lora_path=lora_path, 
-            split=split, 
+            method=eval_method,
+            llm=llm,
+            model_name_or_path=self.model_name_or_path,
+            lora_name=f"individual-{self.id}-{random.randint(0, 10000)}",
+            lora_path=lora_path,
+            split=split,
+            base_model=self.model_name_or_path,
             calculate_ppl=calculate_ppl,
-            return_predictions=return_predictions, 
+            return_predictions=return_predictions,
             **kwargs
         )
         self.task_scores[task] = result['score']

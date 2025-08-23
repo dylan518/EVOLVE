@@ -22,6 +22,7 @@ from datasets import disable_progress_bars
 from vllm import LLM, SamplingParams
 from vllm.lora.request import LoRARequest
 from src.utils import get_gemma_prompt
+import os
 import json
 from loguru import logger
 import time
@@ -92,18 +93,23 @@ class MMLU(Evaluator):
             raise ValueError(f"Invalid method: {method}")
     
     def api_evaluate(self, llm: OpenAI, lora_name: str, lora_path: str, split: str, calculate_ppl: bool=False, return_predictions: bool=False, **kwargs) -> Dict[str, Any]:
+        base_model = kwargs.get("base_model")
         def single_request(messages: List, lora_name: str, reference_answer: str, index: int):
             counter = 1
             while True:
                 try:
+                    extra_body = None
+                    if base_model is not None:
+                        extra_body = {"lora": {"target_for":"default","adapters":[{"name": lora_name, "scale": 1.0}]}, "model": base_model}
                     response = llm.chat.completions.create(
-                        model=lora_name,
+                        model=(base_model or lora_name),
                         messages=messages,
                         temperature=0.2,
                         top_p=0.75,
                         seed=self.seed,
                         max_tokens=1024,
                         logprobs=calculate_ppl,
+                        extra_body=extra_body,
                     )
                     output = response.choices[0].message.content
 
@@ -135,7 +141,15 @@ class MMLU(Evaluator):
                 
         counter = 0
         data = self.load_data(split=split)
-        if lora_path is not None:   
+        # Optional eval limit for smoke runs or constrained environments
+        try:
+            limit = int(os.getenv("EVOLVE_EVAL_LIMIT", "0"))
+        except Exception:
+            limit = 0
+        if limit and limit > 0 and limit < len(data):
+            data = data.select(range(limit))
+        # Optional legacy online LoRA loading: enable only if explicitly requested
+        if lora_path is not None and os.getenv("EVOLVE_USE_ONLINE_LORA", "0") in ("1", "true", "True"):
             online_load_lora(
                 base_url=llm.base_url,
                 lora_name=lora_name,
@@ -143,7 +157,12 @@ class MMLU(Evaluator):
             )
         predictions = dict()
         ppls = 0
-        with ThreadPoolExecutor(max_workers=32) as executor:
+        try:
+            parallel = int(os.getenv("EVOLVE_MMLU_MAX_WORKERS", "4"))
+        except Exception:
+            parallel = 4
+        parallel = max(1, min(32, parallel))
+        with ThreadPoolExecutor(max_workers=parallel) as executor:
             futures = []
             for idx, item in enumerate(data):
                 messages = [{"role": "user", "content": item["prompt"]}]
@@ -162,7 +181,7 @@ class MMLU(Evaluator):
                     counter += 1
                 predictions[result['index']] = result
                 ppls += result.get("perplexity", 0)
-        if lora_path is not None:
+        if lora_path is not None and os.getenv("EVOLVE_USE_ONLINE_LORA", "0") in ("1", "true", "True"):
             online_unload_lora(
                 base_url=llm.base_url,
                 lora_name=lora_name,

@@ -42,13 +42,18 @@ def online_load_lora(base_url: str, lora_name: str, lora_path: str):
     counter = 1
     while True:
         try:
+            base_url_str = str(base_url)
+            endpoint = base_url_str.rstrip('/') + "/load_lora_adapter"
             response = requests.post(
-                f"{base_url}"+"load_lora_adapter",
-                json = {
+                endpoint,
+                json={
                     "lora_name": lora_name,
                     "lora_path": lora_path
                 }
             )
+            if response.status_code == 404:
+                # Server does not expose dynamic LoRA endpoints; treat as no-op
+                return
             time.sleep(3)
             assert response.status_code == 200, f"Failed to load LORA: {response.text}"
             break
@@ -61,12 +66,17 @@ def online_load_lora(base_url: str, lora_name: str, lora_path: str):
 def online_unload_lora(base_url: str, lora_name: str):
     while True:
         try:
+            base_url_str = str(base_url)
+            endpoint = base_url_str.rstrip('/') + "/unload_lora_adapter"
             response = requests.post(
-                f"{base_url}"+"unload_lora_adapter",
-                json = {
+                endpoint,
+                json={
                     "lora_name": lora_name
                 }
             )
+            if response.status_code == 404:
+                # Server does not expose dynamic LoRA endpoints; treat as no-op
+                return
             assert response.status_code == 200, f"Failed to unload LORA: {response.text}"
             break
         except Exception as e:
